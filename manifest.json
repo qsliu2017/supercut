@@ -4,6 +4,10 @@
   "version": "1.0.0",
   "description": "Minimal URL Shortcut Extension",
   "omnibox": { "keyword": "s" },
-  "background": { "service_worker": "background.js" },
+  "background": { "service_worker": "background.js", "type": "module" },
+  "action": {
+    "default_popup": "popup/index.html",
+    "default_title": "New Supercut"
+  },
   "permissions": ["storage"]
 }
