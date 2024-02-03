@@ -1,6 +1,7 @@
-const shortcuts = {
-  ["blog"]: { url: "https://blog.qsliu.dev", description: "My Blog" },
-  ["tool"]: { url: "https://tool.qsliu.dev", description: "My Tool" },
+/**@type {Object<string, {url: string, description: string}>}*/
+let shortcuts = {
+  ["blog"]: { url: "https://blog.qsliu.dev", description: "qsliu's Blog" },
+  ["tool"]: { url: "https://tool.qsliu.dev", description: "qsliu's Tool" },
   ["g"]: { url: "https://github.com", description: "GitHub" },
   ["linux"]: {
     url: "https://elixir.bootlin.com/linux/latest/source",
@@ -8,18 +9,21 @@ const shortcuts = {
   },
 };
 
-chrome.omnibox.onInputChanged.addListener(function (text, suggest) {
-  const suggestions = Object.keys(shortcuts)
-    .filter((sc) => sc.startsWith(text))
-    .map((sc) => ({
-      content: sc,
-      description: `<url><match>${text}</match>${sc.substring(text.length)}</url> ${shortcuts[sc].description}`,
-      deletable: true,
-    }));
+chrome.storage.local.get("shortcuts").then((data) => {
+  console.debug("shortcuts loaded", data);
+  shortcuts = { ...shortcuts, ...data };
+});
 
+chrome.storage.local.onChanged.addListener((changes) => {
+  if (!changes["shortcuts"]) return;
+  console.debug("shortcuts changed", changes["shortcuts"].newValue, shortcuts);
+  shortcuts = changes["shortcuts"].newValue;
+});
+
+chrome.omnibox.onInputChanged.addListener(function (text, suggest) {
   if (shortcuts[text]) {
     chrome.omnibox.setDefaultSuggestion({
-      description: shortcuts[text].description,
+      description: `<url><match>${text}</match></url> ${shortcuts[text].description}`,
     });
   } else {
     chrome.omnibox.setDefaultSuggestion({
@@ -27,7 +31,17 @@ chrome.omnibox.onInputChanged.addListener(function (text, suggest) {
     });
   }
 
-  suggest(suggestions);
+  suggest(
+    Object.entries(shortcuts)
+      .filter(([key]) => key.startsWith(text))
+      .map(([key, { description }]) => ({
+        content: key,
+        description: `<url><match>${text}</match>${key.substring(
+          text.length
+        )}</url> ${description}`,
+        deletable: true,
+      }))
+  );
 });
 
 chrome.omnibox.onInputEntered.addListener(function (text, disposition) {
