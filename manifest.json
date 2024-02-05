@@ -1,0 +1,10 @@
+{
+  "manifest_version": 3,
+  "name": "Supercut",
+  "version": "1.0.0",
+  "description": "Minimal URL Shortcut Extension",
+  "omnibox": { "keyword": "s" },
+  "background": { "service_worker": "src/background.ts" },
+  "action": {},
+  "permissions": ["storage"]
+}
