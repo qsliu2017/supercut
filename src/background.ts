@@ -3,12 +3,16 @@ import { LOCAL_STORAGE_KEY, Shortcuts } from "./types";
 let shortcuts = {} as Shortcuts;
 
 chrome.storage.local.get(LOCAL_STORAGE_KEY, (data) => {
-  shortcuts = data[LOCAL_STORAGE_KEY] || {
-    ["blog"]: { url: "https://blog.qsliu.dev", description: "qsliu's blog" },
-    ["g"]: { url: "https://github.com", description: "GitHub" },
-    ["gh"]: { url: "https://github.com", description: "GitHub" },
-    ["github"]: { url: "https://github.com", description: "GitHub" },
-  };
+  shortcuts = data[LOCAL_STORAGE_KEY];
+  if (!shortcuts) {
+    shortcuts = {
+      ["blog"]: { url: "https://blog.qsliu.dev", description: "qsliu's blog" },
+      ["g"]: { url: "https://github.com", description: "GitHub" },
+      ["gh"]: { url: "https://github.com", description: "GitHub" },
+      ["github"]: { url: "https://github.com", description: "GitHub" },
+    };
+    chrome.storage.local.set({ [LOCAL_STORAGE_KEY]: shortcuts });
+  }
 });
 
 chrome.storage.local.onChanged.addListener((changes) => {
