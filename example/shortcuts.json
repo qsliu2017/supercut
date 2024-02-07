@@ -1,0 +1,6 @@
+{
+  "blog": { "url": "https://blog.qsliu.dev", "description": "qsliu's blog" },
+  "g": { "url": "https://github.com", "description": "GitHub" },
+  "gh": { "url": "https://github.com", "description": "GitHub" },
+  "github": { "url": "https://github.com", "description": "GitHub" }
+}
